@@ -19,28 +19,37 @@
  * 3. This notice may not be removed or altered from any source
  * distribution.
 */
-#ifndef APPLICATION_HPP_
-#define APPLICATION_HPP_
+#ifndef CONFIGUTILITY_HPP_
+#define CONFIGUTILITY_HPP_
 
-#include "base_scene.hpp"
-#include "scene_list.hpp"
 #include "singleton.hpp"
 
-class Application: public Singleton<Application> {
+#include <map>
+#include <string>
+
+class ConfigUtility: public Singleton<ConfigUtility> {
 public:
-	//public methods
-	void Init(int argc, char* argv[]);
-	void Proc();
-	void Quit();
+	void Load(std::string fname, bool skipMissingFile = false, int argc = 0, char* argv[] = nullptr);
+
+	//convert to a type
+	std::string& String(std::string);
+	int Integer(std::string);
+	double Double(std::string);
+	bool Boolean(std::string);
+
+	//shorthand
+	inline std::string& operator[](std::string s) { return configMap[s]; }
+	inline int Int(std::string s) { return Integer(s); }
+	inline bool Bool(std::string s) { return Boolean(s); }
 
 private:
-	friend Singleton<Application>;
+	typedef std::map<std::string, std::string> table_t;
 
-	//Private access members
-	void LoadScene(SceneList sceneIndex);
-	void UnloadScene();
+	friend Singleton<ConfigUtility>;
 
-	BaseScene* activeScene = nullptr;
+	table_t Read(std::string fname, bool skipMissingFile);
+
+	table_t configMap;
 };
 
 #endif

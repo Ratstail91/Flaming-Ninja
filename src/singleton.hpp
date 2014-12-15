@@ -1,4 +1,4 @@
-/* Copyright: (c) Kayne Ruse 2013, 2014
+/* Copyright: (c) Kayne Ruse 2014
  * 
  * This software is provided 'as-is', without any express or implied
  * warranty. In no event will the authors be held liable for any damages
@@ -19,28 +19,47 @@
  * 3. This notice may not be removed or altered from any source
  * distribution.
 */
-#ifndef APPLICATION_HPP_
-#define APPLICATION_HPP_
+#ifndef SINGLETON_HPP_
+#define SINGLETON_HPP_
 
-#include "base_scene.hpp"
-#include "scene_list.hpp"
-#include "singleton.hpp"
+#include <stdexcept>
 
-class Application: public Singleton<Application> {
+template<typename T>
+class Singleton {
 public:
-	//public methods
-	void Init(int argc, char* argv[]);
-	void Proc();
-	void Quit();
+	static T& GetSingleton() {
+		if (!ptr) {
+			throw(std::logic_error("This singleton has not been created"));
+		}
+		return *ptr;
+	}
+
+	static void CreateSingleton() {
+		if (ptr) {
+			throw(std::logic_error("This singleton has already been created"));
+		}
+		ptr = new T();
+	}
+
+	static void DeleteSingleton() {
+		if (!ptr) {
+			throw(std::logic_error("A non-existant singleton cannot be deleted"));
+		}
+		delete ptr;
+		ptr = nullptr;
+	}
+
+protected:
+	Singleton() = default;
+	Singleton(Singleton const&) = default;
+	Singleton(Singleton&&) = default;
+	~Singleton() = default;
 
 private:
-	friend Singleton<Application>;
-
-	//Private access members
-	void LoadScene(SceneList sceneIndex);
-	void UnloadScene();
-
-	BaseScene* activeScene = nullptr;
+	static T* ptr;
 };
+
+template<typename T>
+T* Singleton<T>::ptr = nullptr;
 
 #endif

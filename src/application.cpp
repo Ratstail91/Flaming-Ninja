@@ -20,6 +20,7 @@
  * distribution.
 */
 #include "application.hpp"
+#include "config_utility.hpp"
 
 #include <stdexcept>
 #include <chrono>
@@ -38,6 +39,13 @@
 
 void Application::Init(int argc, char* argv[]) {
 	std::cout << "Beginning " << argv[0] << std::endl;
+
+	//-------------------------
+	//load the config file
+	//-------------------------
+
+	ConfigUtility& config = ConfigUtility::GetSingleton();
+	config.Load("rsc/config.cfg", true, argc, argv);
 
 	//-------------------------
 	//Initialize the APIs

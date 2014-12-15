@@ -20,17 +20,28 @@
  * distribution.
 */
 #include "application.hpp"
+#include "config_utility.hpp"
 
 #include <stdexcept>
 #include <iostream>
 
 int main(int argc, char* argv[]) {
 	try {
-		Application app;
+		//create the singletons
+		ConfigUtility::CreateSingleton();
+
+		//call the application's routines
+		Application::CreateSingleton();
+		Application app = Application::GetSingleton();
 
 		app.Init(argc, argv);
 		app.Proc();
 		app.Quit();
+
+		Application::DeleteSingleton();
+
+		//delete the singletons
+		ConfigUtility::DeleteSingleton();
 	}
 	catch(std::exception& e) {
 		std::cerr << "Fatal exception thrown: " << e.what() << std::endl;
