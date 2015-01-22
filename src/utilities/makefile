@@ -1,15 +1,6 @@
-#include directories
-INCLUDES+=. utilities
-
-#libraries
-#the order of the $(LIBS) is important, at least for MinGW
-LIBS+=../libcommon.a
-ifeq ($(OS),Windows_NT)
-	LIBS+=-lmingw32
-endif
-LIBS+=-lSDLmain -lSDL
-
-#flags
+#config
+INCLUDES+=.
+LIBS+=
 CXXFLAGS+=-std=c++11 $(addprefix -I,$(INCLUDES))
 
 #source
@@ -20,13 +11,12 @@ OBJDIR=obj
 OBJ+=$(addprefix $(OBJDIR)/,$(CXXSRC:.cpp=.o))
 
 #output
-OUTDIR=../out
-OUT=$(addprefix $(OUTDIR)/,ninja)
+OUTDIR=../..
+OUT=$(addprefix $(OUTDIR)/,libcommon.a)
 
 #targets
 all: $(OBJ) $(OUT)
-	$(MAKE) -C utilities
-	$(CXX) $(CXXFLAGS) -o $(OUT) $(OBJ) $(LIBS)
+	ar -crs $(OUT) $(OBJ)
 
 $(OBJ): | $(OBJDIR)
 

@@ -16,7 +16,7 @@ release: clean all package
 
 #For use on my machine ONLY
 package:
-	rar a -r -ep Example.rar $(OUTDIR)/*.exe  $(OUTDIR)/*.dll
+	rar a -r -ep ninja.rar $(OUTDIR)/*.exe  $(OUTDIR)/*.dll
 
 $(OUTDIR):
 	mkdir $(OUTDIR)

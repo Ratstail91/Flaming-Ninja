@@ -1,4 +1,4 @@
-/* Copyright: (c) Kayne Ruse 2014
+/* Copyright: (c) Kayne Ruse 2013-2015
  * 
  * This software is provided 'as-is', without any express or implied
  * warranty. In no event will the authors be held liable for any damages
@@ -19,47 +19,37 @@
  * 3. This notice may not be removed or altered from any source
  * distribution.
 */
-#ifndef SINGLETON_HPP_
-#define SINGLETON_HPP_
+#ifndef CONFIGUTILITY_HPP_
+#define CONFIGUTILITY_HPP_
 
-#include <stdexcept>
+#include "singleton.hpp"
 
-template<typename T>
-class Singleton {
+#include <map>
+#include <string>
+
+class ConfigUtility: public Singleton<ConfigUtility> {
 public:
-	static T& GetSingleton() {
-		if (!ptr) {
-			throw(std::logic_error("This singleton has not been created"));
-		}
-		return *ptr;
-	}
+	void Load(std::string fname, bool skipMissingFile = false, int argc = 0, char* argv[] = nullptr);
 
-	static void CreateSingleton() {
-		if (ptr) {
-			throw(std::logic_error("This singleton has already been created"));
-		}
-		ptr = new T();
-	}
+	//convert to a type
+	std::string& String(std::string);
+	int Integer(std::string);
+	double Double(std::string);
+	bool Boolean(std::string);
 
-	static void DeleteSingleton() {
-		if (!ptr) {
-			throw(std::logic_error("A non-existant singleton cannot be deleted"));
-		}
-		delete ptr;
-		ptr = nullptr;
-	}
-
-protected:
-	Singleton() = default;
-	Singleton(Singleton const&) = default;
-	Singleton(Singleton&&) = default;
-	~Singleton() = default;
+	//shorthand
+	inline std::string& operator[](std::string s) { return configMap[s]; }
+	inline int Int(std::string s) { return Integer(s); }
+	inline bool Bool(std::string s) { return Boolean(s); }
 
 private:
-	static T* ptr;
-};
+	typedef std::map<std::string, std::string> table_t;
 
-template<typename T>
-T* Singleton<T>::ptr = nullptr;
+	friend Singleton<ConfigUtility>;
+
+	table_t Read(std::string fname, bool skipMissingFile);
+
+	table_t configMap;
+};
 
 #endif

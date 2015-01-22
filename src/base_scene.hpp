@@ -1,4 +1,4 @@
-/* Copyright: (c) Kayne Ruse 2013, 2014
+/* Copyright: (c) Kayne Ruse 2013-2015
  * 
  * This software is provided 'as-is', without any express or implied
  * warranty. In no event will the authors be held liable for any damages
@@ -44,27 +44,26 @@ public:
 	virtual void RenderFrame();
 
 protected:
-	//frame loop methods
-	virtual void FrameStart();
+	virtual void FrameStart() {}
 	virtual void HandleEvents();
-	virtual void Update();
-	virtual void FrameEnd();
-	virtual void Render(SDL_Surface* const screen);
+	virtual void Update() {}
+	virtual void FrameEnd() {}
+	virtual void Render(SDL_Surface* const screen) {}
 
 	//Event handlers
-	virtual void QuitEvent();
-	virtual void MouseMotion(SDL_MouseMotionEvent const&);
-	virtual void MouseButtonDown(SDL_MouseButtonEvent const&);
-	virtual void MouseButtonUp(SDL_MouseButtonEvent const&);
-	virtual void KeyDown(SDL_KeyboardEvent const&);
-	virtual void KeyUp(SDL_KeyboardEvent const&);
+	virtual void QuitEvent() { SetNextScene(SceneList::QUIT); }
+	virtual void MouseMotion(SDL_MouseMotionEvent const&) {}
+	virtual void MouseButtonDown(SDL_MouseButtonEvent const&) {}
+	virtual void MouseButtonUp(SDL_MouseButtonEvent const&) {}
+	virtual void KeyDown(SDL_KeyboardEvent const&) {}
+	virtual void KeyUp(SDL_KeyboardEvent const&) {}
 
 #ifdef USE_EVENT_JOYSTICK
 	//TODO: joystick/gamepad support
 #endif
 
 #ifdef USE_EVENT_UNKNOWN
-	virtual void UnknownEvent(SDL_Event const&);
+	virtual void UnknownEvent(SDL_Event const&) {}
 #endif
 
 private:

@@ -1,4 +1,4 @@
-/* Copyright: (c) Kayne Ruse 2013, 2014
+/* Copyright: (c) Kayne Ruse 2013-2015
  * 
  * This software is provided 'as-is', without any express or implied
  * warranty. In no event will the authors be held liable for any damages
@@ -34,11 +34,11 @@ SDL_Surface* BaseScene::screen = nullptr;
 //-------------------------
 
 BaseScene::BaseScene() {
-	//EMPTY
+	//
 }
 
 BaseScene::~BaseScene() {
-	//EMPTY
+	//
 }
 
 //-------------------------
@@ -90,12 +90,8 @@ void BaseScene::RenderFrame() {
 }
 
 //-------------------------
-//frame loop methods
+//Event handlers
 //-------------------------
-
-void BaseScene::FrameStart() {
-	//EMPTY
-}
 
 void BaseScene::HandleEvents() {
 	SDL_Event event;
@@ -105,27 +101,35 @@ void BaseScene::HandleEvents() {
 			case SDL_QUIT:
 				QuitEvent();
 			break;
+
 			case SDL_VIDEORESIZE:
 				SetScreen(event.resize.w, event.resize.h, 0, screen->flags);
 			break;
+
 			case SDL_MOUSEMOTION:
 				MouseMotion(event.motion);
 			break;
+
 			case SDL_MOUSEBUTTONDOWN:
 				MouseButtonDown(event.button);
 			break;
+
 			case SDL_MOUSEBUTTONUP:
 				MouseButtonUp(event.button);
 			break;
+
 			case SDL_KEYDOWN:
 				KeyDown(event.key);
 			break;
+
 			case SDL_KEYUP:
 				KeyUp(event.key);
 			break;
+
 #ifdef USE_EVENT_JOYSTICK
 			//TODO: joystick/gamepad support
 #endif
+
 #ifdef USE_EVENT_UNKNOWN
 			default:
 				UnknownEvent(event);
@@ -133,44 +137,4 @@ void BaseScene::HandleEvents() {
 #endif
 		}//switch
 	}//while
-}
-
-void BaseScene::Update() {
-	//EMPTY
-}
-
-void BaseScene::FrameEnd() {
-	//EMPTY
-}
-
-void BaseScene::Render(SDL_Surface* const screen) {
-	//EMPTY
-}
-
-//-------------------------
-//Event handlers
-//-------------------------
-
-void BaseScene::QuitEvent() {
-	SetNextScene(SceneList::QUIT);
-}
-
-void BaseScene::MouseMotion(SDL_MouseMotionEvent const&) {
-	//EMPTY
-}
-
-void BaseScene::MouseButtonDown(SDL_MouseButtonEvent const&) {
-	//EMPTY
-}
-
-void BaseScene::MouseButtonUp(SDL_MouseButtonEvent const&) {
-	//EMPTY
-}
-
-void BaseScene::KeyDown(SDL_KeyboardEvent const&) {
-	//EMPTY
-}
-
-void BaseScene::KeyUp(SDL_KeyboardEvent const&) {
-	//EMPTY
 }

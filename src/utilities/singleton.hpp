@@ -19,30 +19,45 @@
  * 3. This notice may not be removed or altered from any source
  * distribution.
 */
-#ifndef EXAMPLE_HPP_
-#define EXAMPLE_HPP_
+#ifndef SINGLETON_HPP_
+#define SINGLETON_HPP_
 
-#include "base_scene.hpp"
+#include <stdexcept>
 
-class Example: public BaseScene {
+template<typename T>
+class Singleton {
 public:
-	//Public access members
-	Example();
-	~Example();
+	static T& GetSingleton() {
+		if (!ptr) {
+			throw(std::logic_error("This singleton has not been created"));
+		}
+		return *ptr;
+	}
+	static void CreateSingleton() {
+		if (ptr) {
+			throw(std::logic_error("This singleton has already been created"));
+		}
+		ptr = new T();
+	}
+	static void DeleteSingleton() {
+		if (!ptr) {
+			throw(std::logic_error("A non-existant singleton cannot be deleted"));
+		}
+		delete ptr;
+		ptr = nullptr;
+	}
 
 protected:
-	//Frame loop
-	void FrameStart();
-	void Update();
-	void FrameEnd();
-	void Render(SDL_Surface* const);
+	Singleton() = default;
+	Singleton(Singleton const&) = default;
+	Singleton(Singleton&&) = default;
+	~Singleton() = default;
 
-	//Event handlers
-	void MouseMotion(SDL_MouseMotionEvent const&);
-	void MouseButtonDown(SDL_MouseButtonEvent const&);
-	void MouseButtonUp(SDL_MouseButtonEvent const&);
-	void KeyDown(SDL_KeyboardEvent const&);
-	void KeyUp(SDL_KeyboardEvent const&);
+private:
+	static T* ptr;
 };
+
+template<typename T>
+T* Singleton<T>::ptr = nullptr;
 
 #endif
