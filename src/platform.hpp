@@ -19,37 +19,29 @@
  * 3. This notice may not be removed or altered from any source
  * distribution.
 */
-#ifndef GAMEPLAY_HPP_
-#define GAMEPLAY_HPP_
+#ifndef PLATFORM_HPP_
+#define PLATFORM_HPP_
 
-#include "base_scene.hpp"
-#include "platform.hpp"
+#include "bounding_box.hpp"
+#include "SDL/SDL.h"
+#include "vector2.hpp"
 
-#include <list>
-
-class Gameplay: public BaseScene {
+class Platform {
 public:
-	//Public access members
-	Gameplay();
-	~Gameplay();
+	Platform() = default;
+	~Platform() = default;
 
-protected:
-	//Frame loop
-	void FrameStart();
-	void Update();
-	void FrameEnd();
-	void RenderFrame();
-	void Render(SDL_Surface* const);
+	void DrawTo(SDL_Surface* const dest, int camX, int camY);
 
-	//Event handlers
-	void MouseMotion(SDL_MouseMotionEvent const&);
-	void MouseButtonDown(SDL_MouseButtonEvent const&);
-	void MouseButtonUp(SDL_MouseButtonEvent const&);
-	void KeyDown(SDL_KeyboardEvent const&);
-	void KeyUp(SDL_KeyboardEvent const&);
+	Vector2 SetOrigin(Vector2 v);
+	Vector2 GetOrigin();
 
-	//members
-	std::list<Platform> platformList;
+	BoundingBox SetBounds(BoundingBox b);
+	BoundingBox GetBounds();
+
+private:
+	Vector2 origin;
+	BoundingBox bounds;
 };
 
 #endif

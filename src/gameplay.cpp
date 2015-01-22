@@ -49,8 +49,17 @@ void Gameplay::FrameEnd() {
 	//
 }
 
+void Gameplay::RenderFrame() {
+	SDL_FillRect(GetScreen(), 0, SDL_MapRGB(GetScreen()->format, 255, 255, 255));
+	Render(GetScreen());
+	SDL_Flip(GetScreen());
+	SDL_Delay(10);
+}
+
 void Gameplay::Render(SDL_Surface* const screen) {
-	//
+	for (auto& it : platformList) {
+		it.DrawTo(screen, 0, 0);
+	}
 }
 
 //-------------------------

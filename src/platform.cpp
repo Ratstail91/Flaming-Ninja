@@ -19,37 +19,31 @@
  * 3. This notice may not be removed or altered from any source
  * distribution.
 */
-#ifndef GAMEPLAY_HPP_
-#define GAMEPLAY_HPP_
-
-#include "base_scene.hpp"
 #include "platform.hpp"
 
-#include <list>
+void Platform::DrawTo(SDL_Surface* const dest, int camX, int camY) {
+	//Use SDL to draw a black box
+	SDL_Rect rect;
+	rect.x = origin.x + bounds.x - camX;
+	rect.y = origin.y + bounds.y - camY;
+	rect.w = bounds.w;
+	rect.h = bounds.h;
+	SDL_FillRect(dest, &rect, SDL_MapRGB(dest->format, 0, 0, 0));
+}
 
-class Gameplay: public BaseScene {
-public:
-	//Public access members
-	Gameplay();
-	~Gameplay();
+Vector2 Platform::SetOrigin(Vector2 v) {
+	return origin = v;
+}
 
-protected:
-	//Frame loop
-	void FrameStart();
-	void Update();
-	void FrameEnd();
-	void RenderFrame();
-	void Render(SDL_Surface* const);
+Vector2 Platform::GetOrigin() {
+	return origin;
+}
 
-	//Event handlers
-	void MouseMotion(SDL_MouseMotionEvent const&);
-	void MouseButtonDown(SDL_MouseButtonEvent const&);
-	void MouseButtonUp(SDL_MouseButtonEvent const&);
-	void KeyDown(SDL_KeyboardEvent const&);
-	void KeyUp(SDL_KeyboardEvent const&);
+BoundingBox Platform::SetBounds(BoundingBox b) {
+	return bounds = b;
+}
 
-	//members
-	std::list<Platform> platformList;
-};
+BoundingBox Platform::GetBounds() {
+	return bounds;
+}
 
-#endif
