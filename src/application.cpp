@@ -31,7 +31,7 @@
 //-------------------------
 
 //Add the custom scene headers here
-#include "example.hpp"
+#include "gameplay.hpp"
 
 //-------------------------
 //Public access members
@@ -127,8 +127,8 @@ void Application::LoadScene(SceneList sceneIndex) {
 	switch(sceneIndex) {
 		//add scene creation calls here
 		case SceneList::FIRST:
-		case SceneList::EXAMPLE:
-			activeScene = new Example();
+		case SceneList::GAMEPLAY:
+			activeScene = new Gameplay();
 		break;
 		default:
 			throw(std::logic_error("Failed to recognize the scene index"));

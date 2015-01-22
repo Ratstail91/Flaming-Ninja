@@ -19,17 +19,17 @@
  * 3. This notice may not be removed or altered from any source
  * distribution.
 */
-#include "example.hpp"
+#include "gameplay.hpp"
 
 //-------------------------
 //Public access members
 //-------------------------
 
-Example::Example() {
+Gameplay::Gameplay() {
 	//
 }
 
-Example::~Example() {
+Gameplay::~Gameplay() {
 	//
 }
 
@@ -37,19 +37,19 @@ Example::~Example() {
 //Frame loop
 //-------------------------
 
-void Example::FrameStart() {
+void Gameplay::FrameStart() {
 	//
 }
 
-void Example::Update() {
+void Gameplay::Update() {
 	//
 }
 
-void Example::FrameEnd() {
+void Gameplay::FrameEnd() {
 	//
 }
 
-void Example::Render(SDL_Surface* const screen) {
+void Gameplay::Render(SDL_Surface* const screen) {
 	//
 }
 
@@ -57,19 +57,19 @@ void Example::Render(SDL_Surface* const screen) {
 //Event handlers
 //-------------------------
 
-void Example::MouseMotion(SDL_MouseMotionEvent const& motion) {
+void Gameplay::MouseMotion(SDL_MouseMotionEvent const& motion) {
 	//
 }
 
-void Example::MouseButtonDown(SDL_MouseButtonEvent const& button) {
+void Gameplay::MouseButtonDown(SDL_MouseButtonEvent const& button) {
 	//
 }
 
-void Example::MouseButtonUp(SDL_MouseButtonEvent const& button) {
+void Gameplay::MouseButtonUp(SDL_MouseButtonEvent const& button) {
 	//
 }
 
-void Example::KeyDown(SDL_KeyboardEvent const& key) {
+void Gameplay::KeyDown(SDL_KeyboardEvent const& key) {
 	//hotkeys
 	switch(key.keysym.sym) {
 		case SDLK_ESCAPE:
@@ -78,6 +78,6 @@ void Example::KeyDown(SDL_KeyboardEvent const& key) {
 	}
 }
 
-void Example::KeyUp(SDL_KeyboardEvent const& key) {
+void Gameplay::KeyUp(SDL_KeyboardEvent const& key) {
 	//
 }

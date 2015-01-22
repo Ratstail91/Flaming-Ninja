@@ -19,16 +19,16 @@
  * 3. This notice may not be removed or altered from any source
  * distribution.
 */
-#ifndef EXAMPLE_HPP_
-#define EXAMPLE_HPP_
+#ifndef GAMEPLAY_HPP_
+#define GAMEPLAY_HPP_
 
 #include "base_scene.hpp"
 
-class Example: public BaseScene {
+class Gameplay: public BaseScene {
 public:
 	//Public access members
-	Example();
-	~Example();
+	Gameplay();
+	~Gameplay();
 
 protected:
 	//Frame loop

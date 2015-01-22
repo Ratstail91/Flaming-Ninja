@@ -29,7 +29,7 @@ enum class SceneList {
 	FIRST,
 
 	//custom indexes
-	EXAMPLE,
+	GAMEPLAY,
 };
 
 #endif
