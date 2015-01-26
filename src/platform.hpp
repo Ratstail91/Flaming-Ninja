@@ -22,26 +22,28 @@
 #ifndef PLATFORM_HPP_
 #define PLATFORM_HPP_
 
-#include "bounding_box.hpp"
 #include "SDL/SDL.h"
-#include "vector2.hpp"
 
 class Platform {
 public:
 	Platform() = default;
+	Platform(int x, int y, int w, int h);
 	~Platform() = default;
 
 	void DrawTo(SDL_Surface* const dest, int camX, int camY);
 
-	Vector2 SetOrigin(Vector2 v);
-	Vector2 GetOrigin();
-
-	BoundingBox SetBounds(BoundingBox b);
-	BoundingBox GetBounds();
+	int SetX(int);
+	int SetY(int);
+	int SetW(int);
+	int SetH(int);
+	int GetX();
+	int GetY();
+	int GetW();
+	int GetH();
 
 private:
-	Vector2 origin;
-	BoundingBox bounds;
+	int x, y;
+	int w, h;
 };
 
 #endif

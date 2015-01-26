@@ -21,29 +21,51 @@
 */
 #include "platform.hpp"
 
+Platform::Platform(int argX, int argY, int argW, int argH) {
+	x = argX;
+	y = argY;
+	w = argW;
+	h = argH;
+}
+
 void Platform::DrawTo(SDL_Surface* const dest, int camX, int camY) {
 	//Use SDL to draw a black box
 	SDL_Rect rect;
-	rect.x = origin.x + bounds.x - camX;
-	rect.y = origin.y + bounds.y - camY;
-	rect.w = bounds.w;
-	rect.h = bounds.h;
+	rect.x = x;
+	rect.y = y;
+	rect.w = w;
+	rect.h = h;
 	SDL_FillRect(dest, &rect, SDL_MapRGB(dest->format, 0, 0, 0));
 }
 
-Vector2 Platform::SetOrigin(Vector2 v) {
-	return origin = v;
+int Platform::SetX(int i) {
+	return x = i;
 }
 
-Vector2 Platform::GetOrigin() {
-	return origin;
+int Platform::SetY(int i) {
+	return y = i;
 }
 
-BoundingBox Platform::SetBounds(BoundingBox b) {
-	return bounds = b;
+int Platform::SetW(int i) {
+	return w = i;
 }
 
-BoundingBox Platform::GetBounds() {
-	return bounds;
+int Platform::SetH(int i) {
+	return h = i;
 }
 
+int Platform::GetX() {
+	return x;
+}
+
+int Platform::GetY() {
+	return y;
+}
+
+int Platform::GetW() {
+	return w;
+}
+
+int Platform::GetH() {
+	return h;
+}

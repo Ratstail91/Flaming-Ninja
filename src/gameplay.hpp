@@ -50,6 +50,11 @@ protected:
 
 	//members
 	std::list<Platform> platformList;
+
+	struct {
+		int x = -1, y = -1;
+		bool pressed = false;
+	} selected;
 };
 
 #endif

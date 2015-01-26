@@ -71,11 +71,42 @@ void Gameplay::MouseMotion(SDL_MouseMotionEvent const& motion) {
 }
 
 void Gameplay::MouseButtonDown(SDL_MouseButtonEvent const& button) {
-	//
+	switch(button.button) {
+		case SDL_BUTTON_LEFT:
+			selected.x = button.x;
+			selected.y = button.y;
+			selected.pressed = true;
+		break;
+	}
 }
 
 void Gameplay::MouseButtonUp(SDL_MouseButtonEvent const& button) {
-	//
+	switch(button.button) {
+		case SDL_BUTTON_LEFT:
+			if (selected.pressed) {
+				//basic
+				Platform p(selected.x, selected.y, button.x - selected.x, button.y - selected.y);
+
+				//check for and correct negatives
+				if (p.GetW() < 0) {
+					p.SetW(-p.GetW());
+					p.SetX(p.GetX() - p.GetW());
+				}
+				if (p.GetH() < 0) {
+					p.SetH(-p.GetH());
+					p.SetY(p.GetY() - p.GetH());
+				}
+
+				//push
+				platformList.push_back(p);
+
+				//reset
+				selected.x = -1;
+				selected.y = -1;
+				selected.pressed = false;
+			}
+		break;
+	}
 }
 
 void Gameplay::KeyDown(SDL_KeyboardEvent const& key) {
