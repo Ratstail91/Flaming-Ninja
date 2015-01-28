@@ -21,6 +21,11 @@
 */
 #include "gameplay.hpp"
 
+constexpr double gravity = 0.05;
+constexpr double terminal = 6.0;
+constexpr double moveSpeed = 2.0;
+constexpr double jumpSpeed = 4.0;
+
 //-------------------------
 //Public access members
 //-------------------------
@@ -42,7 +47,14 @@ void Gameplay::FrameStart() {
 }
 
 void Gameplay::Update() {
-	//
+	//gravity
+	if (player.GetMotionY() < terminal) {
+		player.ShiftMotionY(gravity);
+	}
+	if (player.GetMotionY() >= terminal) {
+		player.SetMotionY(terminal);
+	}
+	player.ShiftOriginX(player.GetMotionX());
 }
 
 void Gameplay::FrameEnd() {
@@ -50,16 +62,23 @@ void Gameplay::FrameEnd() {
 }
 
 void Gameplay::RenderFrame() {
-	SDL_FillRect(GetScreen(), 0, SDL_MapRGB(GetScreen()->format, 255, 255, 255));
 	Render(GetScreen());
 	SDL_Flip(GetScreen());
 	SDL_Delay(10);
 }
 
 void Gameplay::Render(SDL_Surface* const screen) {
+	//white background
+	SDL_FillRect(screen, 0, SDL_MapRGB(GetScreen()->format, 255, 255, 255));
+
+	//draw the platforms
 	for (auto& it : platformList) {
 		it.DrawTo(screen, 0, 0);
 	}
+
+	//TODO: (1) draw the tmp platform
+
+	player.DrawTo(screen, 0, 0);
 }
 
 //-------------------------
@@ -110,14 +129,42 @@ void Gameplay::MouseButtonUp(SDL_MouseButtonEvent const& button) {
 }
 
 void Gameplay::KeyDown(SDL_KeyboardEvent const& key) {
-	//hotkeys
 	switch(key.keysym.sym) {
 		case SDLK_ESCAPE:
 			QuitEvent();
+		break;
+
+		//player movement
+		case SDLK_a:
+			player.ShiftMotionX(-moveSpeed);
+		break;
+		case SDLK_d:
+			player.ShiftMotionX(moveSpeed);
+		break;
+		case SDLK_SPACE:
+			player.ShiftMotionY(-jumpSpeed);
 		break;
 	}
 }
 
 void Gameplay::KeyUp(SDL_KeyboardEvent const& key) {
-	//
+	switch(key.keysym.sym) {
+		//player movement (release)
+		case SDLK_a:
+			if (player.GetMotionX() + moveSpeed <= moveSpeed) {
+				player.ShiftMotionX(moveSpeed);
+			}
+			else {
+				player.SetMotionX(moveSpeed);
+			}
+		break;
+		case SDLK_d:
+			if (player.GetMotionX() - moveSpeed >= -moveSpeed) {
+				player.ShiftMotionX(-moveSpeed);
+			}
+			else {
+				player.SetMotionX(-moveSpeed);
+			}
+		break;
+	}
 }

@@ -19,45 +19,46 @@
  * 3. This notice may not be removed or altered from any source
  * distribution.
 */
-#ifndef GAMEPLAY_HPP_
-#define GAMEPLAY_HPP_
+#ifndef PLAYER_HPP_
+#define PLAYER_HPP_
 
-#include "base_scene.hpp"
-#include "platform.hpp"
-#include "player.hpp"
+#include "SDL/SDL.h"
+#include "vector2.hpp"
 
-#include <list>
-
-class Gameplay: public BaseScene {
+class Player {
 public:
-	//Public access members
-	Gameplay();
-	~Gameplay();
+	Player() = default;
+	~Player() = default;
 
-protected:
-	//Frame loop
-	void FrameStart();
-	void Update();
-	void FrameEnd();
-	void RenderFrame();
-	void Render(SDL_Surface* const);
+	void DrawTo(SDL_Surface* const dest, int camX, int camY);
 
-	//Event handlers
-	void MouseMotion(SDL_MouseMotionEvent const&);
-	void MouseButtonDown(SDL_MouseButtonEvent const&);
-	void MouseButtonUp(SDL_MouseButtonEvent const&);
-	void KeyDown(SDL_KeyboardEvent const&);
-	void KeyUp(SDL_KeyboardEvent const&);
+	//accessors & mutators
+	Vector2 SetOrigin(Vector2);
+	Vector2 ShiftOrigin(Vector2);
+	Vector2 GetOrigin();
 
-	//members
-	std::list<Platform> platformList;
+	Vector2 SetMotion(Vector2);
+	Vector2 ShiftMotion(Vector2);
+	Vector2 GetMotion();
 
-	struct {
-		int x = -1, y = -1;
-		bool pressed = false;
-	} selected;
+	//more granular accessors & mutators
+	double SetOriginX(double);
+	double SetOriginY(double);
+	double ShiftOriginX(double);
+	double ShiftOriginY(double);
+	double GetOriginX();
+	double GetOriginY();
 
-	Player player;
+	double SetMotionX(double);
+	double SetMotionY(double);
+	double ShiftMotionX(double);
+	double ShiftMotionY(double);
+	double GetMotionX();
+	double GetMotionY();
+
+private:
+	Vector2 origin;
+	Vector2 motion;
 };
 
 #endif
