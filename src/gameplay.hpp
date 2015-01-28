@@ -52,10 +52,13 @@ protected:
 	//members
 	std::list<Platform> platformList;
 
-	struct {
+	struct Selection {
 		int x = -1, y = -1;
+		int w = -1, h = -1;
 		bool pressed = false;
-	} selected;
+		void CorrectAxis();
+		void DrawTo(SDL_Surface* const dest, int camX, int camY);
+	} selection;
 
 	Player player;
 };

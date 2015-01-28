@@ -69,15 +69,20 @@ void Gameplay::RenderFrame() {
 
 void Gameplay::Render(SDL_Surface* const screen) {
 	//white background
-	SDL_FillRect(screen, 0, SDL_MapRGB(GetScreen()->format, 255, 255, 255));
+	SDL_FillRect(screen, 0, SDL_MapRGB(screen->format, 255, 255, 255));
 
 	//draw the platforms
 	for (auto& it : platformList) {
 		it.DrawTo(screen, 0, 0);
 	}
 
-	//TODO: (1) draw the tmp platform
+	//draw the selection
+	Selection tmp = selection;
+	tmp.CorrectAxis();
+	tmp.DrawTo(screen, 0, 0);
 
+
+	//draw the player
 	player.DrawTo(screen, 0, 0);
 }
 
@@ -86,15 +91,20 @@ void Gameplay::Render(SDL_Surface* const screen) {
 //-------------------------
 
 void Gameplay::MouseMotion(SDL_MouseMotionEvent const& motion) {
-	//
+	if (selection.pressed) {
+		selection.w += motion.xrel;
+		selection.h += motion.yrel;
+	}
 }
 
 void Gameplay::MouseButtonDown(SDL_MouseButtonEvent const& button) {
 	switch(button.button) {
 		case SDL_BUTTON_LEFT:
-			selected.x = button.x;
-			selected.y = button.y;
-			selected.pressed = true;
+			selection.x = button.x;
+			selection.y = button.y;
+			selection.w = 0;
+			selection.h = 0;
+			selection.pressed = true;
 		break;
 	}
 }
@@ -102,27 +112,18 @@ void Gameplay::MouseButtonDown(SDL_MouseButtonEvent const& button) {
 void Gameplay::MouseButtonUp(SDL_MouseButtonEvent const& button) {
 	switch(button.button) {
 		case SDL_BUTTON_LEFT:
-			if (selected.pressed) {
-				//basic
-				Platform p(selected.x, selected.y, button.x - selected.x, button.y - selected.y);
-
-				//check for and correct negatives
-				if (p.GetW() < 0) {
-					p.SetW(-p.GetW());
-					p.SetX(p.GetX() - p.GetW());
-				}
-				if (p.GetH() < 0) {
-					p.SetH(-p.GetH());
-					p.SetY(p.GetY() - p.GetH());
-				}
+			if (selection.pressed) {
+				selection.CorrectAxis();
 
 				//push
-				platformList.push_back(p);
+				platformList.emplace_back(selection.x, selection.y, selection.w, selection.h);
 
 				//reset
-				selected.x = -1;
-				selected.y = -1;
-				selected.pressed = false;
+				selection.x = -1;
+				selection.y = -1;
+				selection.w = -1;
+				selection.h = -1;
+				selection.pressed = false;
 			}
 		break;
 	}
@@ -167,4 +168,30 @@ void Gameplay::KeyUp(SDL_KeyboardEvent const& key) {
 			}
 		break;
 	}
+}
+
+//-------------------------
+//utilities
+//-------------------------
+
+void Gameplay::Selection::CorrectAxis() {
+	//check for and correct negatives
+	if (w < 0) {
+		w = -w;
+		x = x - w;
+	}
+	if (h < 0) {
+		h = -h;
+		y = y - h;
+	}
+}
+
+void Gameplay::Selection::DrawTo(SDL_Surface* const dest, int camX, int camY) {
+	//Use SDL to draw a black box
+	SDL_Rect rect;
+	rect.x = x;
+	rect.y = y;
+	rect.w = w;
+	rect.h = h;
+	SDL_FillRect(dest, &rect, SDL_MapRGB(dest->format, 86, 61, 228));
 }

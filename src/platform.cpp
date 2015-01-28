@@ -29,13 +29,13 @@ Platform::Platform(int argX, int argY, int argW, int argH) {
 }
 
 void Platform::DrawTo(SDL_Surface* const dest, int camX, int camY) {
-	//Use SDL to draw a black box
+	//Use SDL to draw a box
 	SDL_Rect rect;
 	rect.x = x;
 	rect.y = y;
 	rect.w = w;
 	rect.h = h;
-	SDL_FillRect(dest, &rect, SDL_MapRGB(dest->format, 0, 0, 0));
+	SDL_FillRect(dest, &rect, SDL_MapRGB(dest->format, 0, 61, 228));
 }
 
 int Platform::SetX(int i) {
