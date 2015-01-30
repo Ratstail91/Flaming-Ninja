@@ -76,11 +76,17 @@ void Gameplay::Render(SDL_Surface* const screen) {
 		it.DrawTo(screen, 0, 0);
 	}
 
-	//draw the selection
-	Selection tmp = selection;
-	tmp.CorrectAxis();
-	tmp.DrawTo(screen, 0, 0);
-
+	//draw the selections
+	if (drawSelection.pressed) {
+		Selection tmp = drawSelection;
+		tmp.CorrectAxis();
+		tmp.DrawTo(screen, 0, 0);
+	}
+	if (dragSelection.pressed) {
+		Selection tmp = dragSelection;
+		tmp.CorrectAxis();
+		tmp.DrawTo(screen, 0, 0);
+	}
 
 	//draw the player
 	player.DrawTo(screen, 0, 0);
@@ -91,20 +97,55 @@ void Gameplay::Render(SDL_Surface* const screen) {
 //-------------------------
 
 void Gameplay::MouseMotion(SDL_MouseMotionEvent const& motion) {
-	if (selection.pressed) {
-		selection.w += motion.xrel;
-		selection.h += motion.yrel;
+	if (drawSelection.pressed) {
+		drawSelection.w += motion.xrel;
+		drawSelection.h += motion.yrel;
+	}
+	if (dragSelection.pressed) {
+		dragSelection.x += motion.xrel;
+		dragSelection.y += motion.yrel;
 	}
 }
 
 void Gameplay::MouseButtonDown(SDL_MouseButtonEvent const& button) {
 	switch(button.button) {
 		case SDL_BUTTON_LEFT:
-			selection.x = button.x;
-			selection.y = button.y;
-			selection.w = 0;
-			selection.h = 0;
-			selection.pressed = true;
+			if (dragSelection.pressed) {
+				break;
+			}
+			drawSelection.x = button.x;
+			drawSelection.y = button.y;
+			drawSelection.w = 0;
+			drawSelection.h = 0;
+			drawSelection.pressed = true;
+		break;
+		case SDL_BUTTON_RIGHT: {
+			if (drawSelection.pressed) {
+				break;
+			}
+			//compare
+			BoundingBox mouseBox(button.x, button.y);
+			BoundingBox platformBox;
+
+			//get the drag selection
+			for (std::list<Platform>::iterator it = platformList.begin(); it != platformList.end(); it++) {
+				//bounds
+				platformBox.x = it->GetX();
+				platformBox.y = it->GetY();
+				platformBox.w = it->GetW();
+				platformBox.h = it->GetH();
+
+				if (mouseBox.CheckOverlap(platformBox)) {
+					dragSelection.x = it->GetX();
+					dragSelection.y = it->GetY();
+					dragSelection.w = it->GetW();
+					dragSelection.h = it->GetH();
+					platformList.erase(it);
+					dragSelection.pressed = true;
+					return;
+				}
+			}
+		}
 		break;
 	}
 }
@@ -112,18 +153,19 @@ void Gameplay::MouseButtonDown(SDL_MouseButtonEvent const& button) {
 void Gameplay::MouseButtonUp(SDL_MouseButtonEvent const& button) {
 	switch(button.button) {
 		case SDL_BUTTON_LEFT:
-			if (selection.pressed) {
-				selection.CorrectAxis();
-
-				//push
-				platformList.emplace_back(selection.x, selection.y, selection.w, selection.h);
-
-				//reset
-				selection.x = -1;
-				selection.y = -1;
-				selection.w = -1;
-				selection.h = -1;
-				selection.pressed = false;
+			if (drawSelection.pressed) {
+				//push the selection to the list
+				drawSelection.CorrectAxis();
+				platformList.emplace_back(drawSelection.x, drawSelection.y, drawSelection.w, drawSelection.h);
+				drawSelection.Reset();
+			}
+		break;
+		case SDL_BUTTON_RIGHT:
+			if (dragSelection.pressed) {
+				//drop the dragged selection to the list
+				dragSelection.CorrectAxis();
+				platformList.emplace_back(dragSelection.x, dragSelection.y, dragSelection.w, dragSelection.h);
+				dragSelection.Reset();
 			}
 		break;
 	}
@@ -174,6 +216,16 @@ void Gameplay::KeyUp(SDL_KeyboardEvent const& key) {
 //utilities
 //-------------------------
 
+void Gameplay::Selection::DrawTo(SDL_Surface* const dest, int camX, int camY) {
+	//Use SDL to draw a black box
+	SDL_Rect rect;
+	rect.x = x;
+	rect.y = y;
+	rect.w = w;
+	rect.h = h;
+	SDL_FillRect(dest, &rect, SDL_MapRGB(dest->format, 86, 61, 228));
+}
+
 void Gameplay::Selection::CorrectAxis() {
 	//check for and correct negatives
 	if (w < 0) {
@@ -186,12 +238,7 @@ void Gameplay::Selection::CorrectAxis() {
 	}
 }
 
-void Gameplay::Selection::DrawTo(SDL_Surface* const dest, int camX, int camY) {
-	//Use SDL to draw a black box
-	SDL_Rect rect;
-	rect.x = x;
-	rect.y = y;
-	rect.w = w;
-	rect.h = h;
-	SDL_FillRect(dest, &rect, SDL_MapRGB(dest->format, 86, 61, 228));
+void Gameplay::Selection::Reset() {
+	x = y = w = h = -1;
+	pressed = false;
 }

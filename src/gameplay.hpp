@@ -23,6 +23,7 @@
 #define GAMEPLAY_HPP_
 
 #include "base_scene.hpp"
+#include "bounding_box.hpp"
 #include "platform.hpp"
 #include "player.hpp"
 
@@ -56,9 +57,10 @@ protected:
 		int x = -1, y = -1;
 		int w = -1, h = -1;
 		bool pressed = false;
-		void CorrectAxis();
 		void DrawTo(SDL_Surface* const dest, int camX, int camY);
-	} selection;
+		void CorrectAxis();
+		void Reset();
+	} drawSelection, dragSelection;
 
 	Player player;
 };
