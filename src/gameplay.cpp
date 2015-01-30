@@ -168,6 +168,32 @@ void Gameplay::MouseButtonUp(SDL_MouseButtonEvent const& button) {
 				dragSelection.Reset();
 			}
 		break;
+		case SDL_BUTTON_MIDDLE:
+			//delete this platform
+			if (drawSelection.pressed) {
+				drawSelection.Reset();
+			}
+			if (dragSelection.pressed) {
+				dragSelection.Reset();
+			}
+			//compare
+			BoundingBox mouseBox(button.x, button.y);
+			BoundingBox platformBox;
+
+			//get the platform under the hover
+			for (std::list<Platform>::iterator it = platformList.begin(); it != platformList.end(); it++) {
+				//bounds
+				platformBox.x = it->GetX();
+				platformBox.y = it->GetY();
+				platformBox.w = it->GetW();
+				platformBox.h = it->GetH();
+
+				if (mouseBox.CheckOverlap(platformBox)) {
+					platformList.erase(it);
+					return;
+				}
+			}
+		break;
 	}
 }
 
