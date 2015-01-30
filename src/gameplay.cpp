@@ -48,13 +48,13 @@ void Gameplay::FrameStart() {
 
 void Gameplay::Update() {
 	//gravity
-	if (player.GetMotionY() < terminal) {
-		player.ShiftMotionY(gravity);
-	}
-	if (player.GetMotionY() >= terminal) {
-		player.SetMotionY(terminal);
-	}
-	player.ShiftOriginX(player.GetMotionX());
+//	if (player.GetMotionY() < terminal) {
+//		player.ShiftMotionY(gravity);
+//	}
+//	if (player.GetMotionY() >= terminal) {
+//		player.SetMotionY(terminal);
+//	}
+	player.ShiftOrigin(player.GetMotion());
 }
 
 void Gameplay::FrameEnd() {
@@ -70,6 +70,18 @@ void Gameplay::RenderFrame() {
 void Gameplay::Render(SDL_Surface* const screen) {
 	//white background
 	SDL_FillRect(screen, 0, SDL_MapRGB(screen->format, 255, 255, 255));
+
+	/*DEBUG: draw the boxList
+	std::list<BoundingBox> boxList = CalcBoxList();
+	SweepBoxList(boxList, BoundingBox(0, 0, 32, 32));
+	for (auto& it : boxList) {
+		SDL_Rect rect;
+		rect.x = it.x;
+		rect.y = it.y;
+		rect.w = it.w;
+		rect.h = it.h;
+		SDL_FillRect(screen, &rect, SDL_MapRGB(screen->format, 255, 0, 255));
+	}//*/
 
 	//draw the platforms
 	for (auto& it : platformList) {
@@ -204,27 +216,49 @@ void Gameplay::KeyDown(SDL_KeyboardEvent const& key) {
 		break;
 
 		//player movement
+		case SDLK_w:
+			player.ShiftMotionY(-moveSpeed);
+		break;
 		case SDLK_a:
 			player.ShiftMotionX(-moveSpeed);
+		break;
+		case SDLK_s:
+			player.ShiftMotionY(moveSpeed);
 		break;
 		case SDLK_d:
 			player.ShiftMotionX(moveSpeed);
 		break;
-		case SDLK_SPACE:
-			player.ShiftMotionY(-jumpSpeed);
-		break;
+//		case SDLK_SPACE:
+//			player.ShiftMotionY(-jumpSpeed);
+//		break;
 	}
 }
 
 void Gameplay::KeyUp(SDL_KeyboardEvent const& key) {
 	switch(key.keysym.sym) {
 		//player movement (release)
+		case SDLK_w:
+			if (player.GetMotionY() + moveSpeed <= moveSpeed) {
+				player.ShiftMotionY(moveSpeed);
+			}
+			else {
+				player.SetMotionY(moveSpeed);
+			}
+		break;
 		case SDLK_a:
 			if (player.GetMotionX() + moveSpeed <= moveSpeed) {
 				player.ShiftMotionX(moveSpeed);
 			}
 			else {
 				player.SetMotionX(moveSpeed);
+			}
+		break;
+		case SDLK_s:
+			if (player.GetMotionY() - moveSpeed >= -moveSpeed) {
+				player.ShiftMotionY(-moveSpeed);
+			}
+			else {
+				player.SetMotionY(-moveSpeed);
 			}
 		break;
 		case SDLK_d:
@@ -235,12 +269,25 @@ void Gameplay::KeyUp(SDL_KeyboardEvent const& key) {
 				player.SetMotionX(-moveSpeed);
 			}
 		break;
+		case SDLK_1:
+			player.SetOrigin({0, 0});
+			player.SetMotion({0, 0});
+		break;
 	}
 }
 
 //-------------------------
 //utilities
 //-------------------------
+
+std::list<BoundingBox> Gameplay::CalcBoxList() {
+	std::list<BoundingBox> boxList;
+	for (auto& it : platformList) {
+		boxList.emplace_back(it.GetX(), it.GetY(), it.GetW(), it.GetH());
+	}
+	return boxList;
+
+}
 
 void Gameplay::Selection::DrawTo(SDL_Surface* const dest, int camX, int camY) {
 	//Use SDL to draw a black box
@@ -267,4 +314,48 @@ void Gameplay::Selection::CorrectAxis() {
 void Gameplay::Selection::Reset() {
 	x = y = w = h = -1;
 	pressed = false;
+}
+
+//-------------------------
+//Maths
+//-------------------------
+
+//NOTE: the box list should be pre-computed as absolute collision areas
+
+void Gameplay::SweepBoxList(std::list<BoundingBox>& boxList, BoundingBox box) {
+	//minkowski sum; blame handmade hero
+	for (auto& it : boxList) {
+		it.x -= box.w / 2;
+		it.y -= box.h / 2;
+		it.w += box.w;
+		it.h += box.h;
+	}
+}
+
+//NOTE: The origin here MUST be the center of the swepted box, not the raw origin of the player object
+Vector2 Gameplay::ProjectVector(Vector2 origin, Vector2 motion, std::list<BoundingBox> boxList) {
+	Vector2 shortestMotion;
+	Vector2 deflectedMotion;
+
+	//forever
+	for (;;) {
+		//find the shortest projection possible with this motion
+		shortestMotion = motion;
+
+		//check if the motion vector passes through a box area
+		for (auto& box : boxList) {
+			//TODO: account for a "shortest" projection of 0 (collided at 90°)
+			//TODO: if so, calculate the "shortest" motion possible
+			//TODO: then, calculate the deflection
+		}
+
+		//finally, check for a change to the projected vector
+		if (shortestMotion != motion) {
+			origin += shortestMotion;
+			motion = deflectedMotion;
+		}
+		else {
+			return origin + motion;
+		}
+	}
 }

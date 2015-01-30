@@ -52,6 +52,7 @@ protected:
 
 	//members
 	std::list<Platform> platformList;
+	std::list<BoundingBox> CalcBoxList();
 
 	struct Selection {
 		int x = -1, y = -1;
@@ -63,6 +64,10 @@ protected:
 	} drawSelection, dragSelection;
 
 	Player player;
+
+	//Maths
+	void SweepBoxList(std::list<BoundingBox>& boxList, BoundingBox box);
+	Vector2 ProjectVector(Vector2 origin, Vector2 motion, std::list<BoundingBox> boxList);
 };
 
 #endif
