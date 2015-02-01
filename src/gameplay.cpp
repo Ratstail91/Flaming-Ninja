@@ -54,7 +54,14 @@ void Gameplay::Update() {
 //	if (player.GetMotionY() >= terminal) {
 //		player.SetMotionY(terminal);
 //	}
-	player.ShiftOrigin(player.GetMotion());
+//	player.ShiftOrigin(player.GetMotion());
+
+	//check collisions & move
+	//NOTE: magic numbers for the player's bounding box
+	std::list<BoundingBox> boxList = CalcBoxList();
+	SweepBoxList(boxList, {0, 0, 32, 32});
+	Vector2 epsilon(16, 16);
+	player.SetOrigin(ProjectVector(player.GetOrigin() + epsilon, player.GetMotion(), boxList) - epsilon);
 }
 
 void Gameplay::FrameEnd() {
@@ -332,8 +339,30 @@ void Gameplay::SweepBoxList(std::list<BoundingBox>& boxList, BoundingBox box) {
 	}
 }
 
+bool calcCollision(double originX, int boxLeft, int boxRight, double originY, int boxTop, int boxBottom, double motionX, double motionY) {
+	//length of c
+	double a = std::min(std::abs(boxLeft - originX), std::abs(boxRight - originX));
+	Vector2 B(motionX, motionY);
+	B.Normalize();
+	double c = a / std::atan2(B.y, B.x);
+
+	//not a collision
+	if (c < Vector2(motionX, motionY).Length()) {
+		return false;
+	}
+
+	//is A on minLine?
+	Vector2 A = B * c; //NOTE: B is a unit vector, so multiplying should work
+	return (A.y > boxTop) && (A.y < boxBottom); //TODO: fuck
+}
+
 //NOTE: The origin here MUST be the center of the swepted box, not the raw origin of the player object
 Vector2 Gameplay::ProjectVector(Vector2 origin, Vector2 motion, std::list<BoundingBox> boxList) {
+	//check for a lack of movement
+	if (motion == 0) {
+		return origin;
+	}
+
 	Vector2 shortestMotion;
 	Vector2 deflectedMotion;
 
@@ -346,6 +375,12 @@ Vector2 Gameplay::ProjectVector(Vector2 origin, Vector2 motion, std::list<Boundi
 		for (auto& box : boxList) {
 			//TODO: account for a "shortest" projection of 0 (collided at 90°)
 			//TODO: if so, calculate the "shortest" motion possible
+			bool collision = false;
+			collision |= calcCollision(origin.x, box.x, box.x + box.w, origin.y, box.y, box.y + box.h, motion.x, motion.y); //normal orientation
+			collision |= calcCollision(origin.y, box.y, box.y + box.h, origin.x, box.x, box.x + box.w, motion.y, motion.x); //rotated orientation
+			if (collision) {//TODO: remove this
+				return origin;
+			}
 			//TODO: then, calculate the deflection
 		}
 
