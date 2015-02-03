@@ -82,5 +82,5 @@ Vector2 projectCollisionVectorV(Vector2 origin, Vector2 motion, int boxLeft, int
 Vector2 projectCollisionVector(Vector2 origin, Vector2 motion, int boxLeft, int boxRight, int boxTop, int boxBottom) {
 	Vector2 h = projectCollisionVectorH(origin, motion, boxLeft, boxRight, boxTop, boxBottom);
 	Vector2 v = projectCollisionVectorV(origin, motion, boxLeft, boxRight, boxTop, boxBottom);
-	return h.SquaredLength() > v.SquaredLength() ? h : v;
+	return h.SquaredLength() < v.SquaredLength() ? h : v;
 }

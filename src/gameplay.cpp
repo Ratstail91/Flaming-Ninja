@@ -21,6 +21,8 @@
 */
 #include "gameplay.hpp"
 
+#include <iostream>
+
 constexpr double gravity = 0.05;
 constexpr double terminal = 6.0;
 constexpr double moveSpeed = 2.0;
@@ -61,7 +63,9 @@ void Gameplay::Update() {
 	std::list<BoundingBox> boxList = CalcBoxList();
 	SweepBoxList(boxList, {0, 0, 32, 32});
 	Vector2 epsilon(16, 16);
-	player.SetOrigin(ProjectVector(player.GetOrigin() + epsilon, player.GetMotion(), boxList) - epsilon);
+	player.SetOrigin(ProjectCollisionVector(player.GetOrigin() + epsilon, player.GetMotion(), boxList) - epsilon);
+
+	std::cout << player.GetOriginX() << ", " << player.GetOriginY() << std::endl;
 }
 
 void Gameplay::FrameEnd() {
@@ -78,7 +82,7 @@ void Gameplay::Render(SDL_Surface* const screen) {
 	//white background
 	SDL_FillRect(screen, 0, SDL_MapRGB(screen->format, 255, 255, 255));
 
-	//*DEBUG: draw the boxList
+	/*DEBUG: draw the boxList
 	std::list<BoundingBox> boxList = CalcBoxList();
 	SweepBoxList(boxList, BoundingBox(0, 0, 32, 32));
 	for (auto& it : boxList) {
@@ -340,34 +344,23 @@ void Gameplay::SweepBoxList(std::list<BoundingBox>& boxList, BoundingBox box) {
 }
 
 //NOTE: The origin here MUST be the center of the swepted box, not the raw origin of the player object
-Vector2 Gameplay::ProjectVector(Vector2 origin, Vector2 motion, std::list<BoundingBox> boxList) {
+Vector2 Gameplay::ProjectCollisionVector(Vector2 origin, Vector2 motion, std::list<BoundingBox> boxList) {
 	//check for a lack of movement
 	if (motion == 0) {
 		return origin;
 	}
 
-	Vector2 shortestMotion;
-	Vector2 deflectedMotion;
+	Vector2 shortestMotion = motion;
+	Vector2 deflectedMotion = {0, 0};
 
-	//forever
-	for (;;) {
-		//find the shortest projection possible with this motion
-		shortestMotion = motion;
+	//check if the motion vector passes through a box area
+	for (auto& box : boxList) {
+		//TODO: if so, calculate the "shortest" motion possible
+		shortestMotion = projectCollisionVector(origin, shortestMotion, box.x, box.x + box.w, box.y, box.y + box.h);
 
-		//check if the motion vector passes through a box area
-		for (auto& box : boxList) {
-			//TODO: account for a "shortest" projection of 0 (collided at 90°)
-			//TODO: if so, calculate the "shortest" motion possible
-			//TODO: then, calculate the deflection
-		}
-
-		//finally, check for a change to the projected vector
-		if (shortestMotion != motion) {
-			origin += shortestMotion;
-			motion = deflectedMotion;
-		}
-		else {
-			return origin + motion;
-		}
+		//TODO: then, calculate the deflection
+		//TODO: account for a "shortest" projection of 0 (collided at 90°)
 	}
+
+	return origin + shortestMotion;
 }

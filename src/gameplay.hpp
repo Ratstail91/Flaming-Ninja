@@ -26,6 +26,7 @@
 #include "bounding_box.hpp"
 #include "platform.hpp"
 #include "player.hpp"
+#include "vector2_aux.hpp"
 
 #include <list>
 
@@ -67,7 +68,7 @@ protected:
 
 	//Maths
 	void SweepBoxList(std::list<BoundingBox>& boxList, BoundingBox box);
-	Vector2 ProjectVector(Vector2 origin, Vector2 motion, std::list<BoundingBox> boxList);
+	Vector2 ProjectCollisionVector(Vector2 origin, Vector2 motion, std::list<BoundingBox> boxList);
 };
 
 #endif
