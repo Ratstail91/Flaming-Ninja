@@ -4,7 +4,7 @@ This is a prototype of a platformer.
 
 ## Releases
 
-No available release builds yet.
+The most recent stable build for Windows can be found [here](https://dl.dropboxusercontent.com/u/46669050/Ninja.rar).
 
 ## Documentation
 
@@ -16,7 +16,7 @@ No documentation yet.
 
 ## Tools
 
-No tools needed yet.
+* [WinRAR](http://www.rarlab.com/) - The best compression tool available IMO; only needed for distribution
 
 ## Copyright
 
