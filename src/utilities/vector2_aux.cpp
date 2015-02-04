@@ -21,6 +21,8 @@
 */
 #include "vector2_aux.hpp"
 
+#include "bounding_box.hpp"
+
 double sin(Vector2 v) {
 	return v.y / sqrt(v.x*v.x + v.y*v.y);
 }
@@ -80,6 +82,16 @@ Vector2 projectCollisionVectorV(Vector2 origin, Vector2 motion, int boxLeft, int
 }
 
 Vector2 projectCollisionVector(Vector2 origin, Vector2 motion, int boxLeft, int boxRight, int boxTop, int boxBottom) {
+	//BUGFIX: no motion
+	if (motion == 0) {
+		return motion;
+	}
+
+	//BUGIFX: moving away
+	if (!BoundingBox(boxLeft, boxTop, boxRight-boxLeft, boxBottom-boxTop).CheckOverlap({int(origin.x+motion.x+motion.x), int(origin.y+motion.y+motion.y)})) {
+		return motion;
+	}
+
 	Vector2 h = projectCollisionVectorH(origin, motion, boxLeft, boxRight, boxTop, boxBottom);
 	Vector2 v = projectCollisionVectorV(origin, motion, boxLeft, boxRight, boxTop, boxBottom);
 	return h.SquaredLength() < v.SquaredLength() ? h : v;
