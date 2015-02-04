@@ -83,7 +83,7 @@ void Gameplay::Render(SDL_Surface* const screen) {
 	//white background
 	SDL_FillRect(screen, 0, SDL_MapRGB(screen->format, 255, 255, 255));
 
-	/*DEBUG: draw the boxList
+	//*DEBUG: draw the boxList
 	std::list<BoundingBox> boxList = CalcBoxList();
 	SweepBoxList(boxList, BoundingBox(0, 0, 32, 32));
 	for (auto& it : boxList) {
