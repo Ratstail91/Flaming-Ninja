@@ -6,6 +6,7 @@
 OUTDIR=out
 
 all: $(OUTDIR)
+	$(MAKE) -C common
 	$(MAKE) -C src
 
 debug: export CXXFLAGS+=-g

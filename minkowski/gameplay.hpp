@@ -23,6 +23,12 @@
 #define GAMEPLAY_HPP_
 
 #include "base_scene.hpp"
+#include "bounding_box.hpp"
+#include "platform.hpp"
+#include "player.hpp"
+#include "vector2_aux.hpp"
+
+#include <list>
 
 class Gameplay: public BaseScene {
 public:
@@ -35,6 +41,7 @@ protected:
 	void FrameStart();
 	void Update();
 	void FrameEnd();
+	void RenderFrame();
 	void Render(SDL_Surface* const);
 
 	//Event handlers
@@ -43,6 +50,25 @@ protected:
 	void MouseButtonUp(SDL_MouseButtonEvent const&);
 	void KeyDown(SDL_KeyboardEvent const&);
 	void KeyUp(SDL_KeyboardEvent const&);
+
+	//members
+	std::list<Platform> platformList;
+	std::list<BoundingBox> CalcBoxList();
+
+	struct Selection {
+		int x = -1, y = -1;
+		int w = -1, h = -1;
+		bool pressed = false;
+		void DrawTo(SDL_Surface* const dest, int camX, int camY);
+		void CorrectAxis();
+		void Reset();
+	} drawSelection, dragSelection;
+
+	Player player;
+
+	//Maths
+	void SweepBoxList(std::list<BoundingBox>& boxList, BoundingBox box);
+	Vector2 ProjectCollisionVector(Vector2 origin, Vector2 motion, std::list<BoundingBox> boxList);
 };
 
 #endif

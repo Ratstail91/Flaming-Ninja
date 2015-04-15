@@ -1,5 +1,5 @@
 #include directories
-INCLUDES+=. utilities
+INCLUDES+=. ../common/utilities
 
 #libraries
 #the order of the $(LIBS) is important, at least for MinGW
@@ -25,8 +25,6 @@ OUT=$(addprefix $(OUTDIR)/,ninja)
 
 #targets
 all: $(OBJ) $(OUT)
-	$(MAKE) -C graphics
-	$(MAKE) -C utilities
 	$(CXX) $(CXXFLAGS) -o $(OUT) $(OBJ) $(LIBS)
 
 $(OBJ): | $(OBJDIR)

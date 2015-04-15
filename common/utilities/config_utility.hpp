@@ -1,4 +1,4 @@
-/* Copyright: (c) Kayne Ruse 2015
+/* Copyright: (c) Kayne Ruse 2013-2015
  * 
  * This software is provided 'as-is', without any express or implied
  * warranty. In no event will the authors be held liable for any damages
@@ -19,30 +19,37 @@
  * 3. This notice may not be removed or altered from any source
  * distribution.
 */
-#ifndef FRAMERATE_HPP_
-#define FRAMERATE_HPP_
+#ifndef CONFIGUTILITY_HPP_
+#define CONFIGUTILITY_HPP_
 
-#include <chrono>
+#include "singleton.hpp"
 
-class FrameRate {
+#include <map>
+#include <string>
+
+class ConfigUtility: public Singleton<ConfigUtility> {
 public:
-	typedef std::chrono::high_resolution_clock Clock;
+	void Load(std::string fname, bool skipMissingFile = false, int argc = 0, char* argv[] = nullptr);
 
-	FrameRate() = default;
-	int Calculate() {
-		frameCount++;
-		if (Clock::now() - tick >= std::chrono::duration<int>(1)) {
-			lastFrameRate = frameCount;
-			frameCount = 0;
-			tick = Clock::now();
-		}
-		return lastFrameRate;
-	}
-	int GetFrameRate() { return lastFrameRate; }
+	//convert to a type
+	std::string& String(std::string);
+	int Integer(std::string);
+	double Double(std::string);
+	bool Boolean(std::string);
+
+	//shorthand
+	inline std::string& operator[](std::string s) { return configMap[s]; }
+	inline int Int(std::string s) { return Integer(s); }
+	inline bool Bool(std::string s) { return Boolean(s); }
+
 private:
-	int frameCount = 0;
-	int lastFrameRate = 0;
-	Clock::time_point tick = Clock::now();
+	typedef std::map<std::string, std::string> table_t;
+
+	friend Singleton<ConfigUtility>;
+
+	table_t Read(std::string fname, bool skipMissingFile);
+
+	table_t configMap;
 };
 
 #endif
