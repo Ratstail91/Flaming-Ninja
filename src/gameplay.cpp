@@ -26,7 +26,20 @@
 //-------------------------
 
 Gameplay::Gameplay() {
-	//
+	//singleton alias
+	ConfigUtility& config = ConfigUtility::GetSingleton();
+
+	//load the images
+	player.GetImage()->LoadSurface(config["dir.graphics"] + "player.bmp");
+	blockTemplate.LoadSurface(config["dir.graphics"] + "brick.bmp");
+
+	//generate the ground
+	for (int i = 0; i < 10; i++) {
+		blockList.emplace_front();
+		blockList.front().SetOrigin({i * 32.0, 568.0});
+		blockList.front().GetImage()->SetSurface(blockTemplate.GetSurface());
+		blockList.front().SetBounds({0, 0, blockTemplate.GetClipW(), blockTemplate.GetClipH()});
+	}
 }
 
 Gameplay::~Gameplay() {
@@ -50,7 +63,9 @@ void Gameplay::FrameEnd() {
 }
 
 void Gameplay::Render(SDL_Surface* const screen) {
-	//
+	for (auto& it : blockList) {
+		it.GetImage()->DrawTo(screen, it.GetOrigin().x, it.GetOrigin().y);
+	}
 }
 
 //-------------------------

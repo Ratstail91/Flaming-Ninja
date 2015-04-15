@@ -23,6 +23,12 @@
 #define GAMEPLAY_HPP_
 
 #include "base_scene.hpp"
+#include "block.hpp"
+#include "config_utility.hpp"
+#include "image.hpp"
+#include "player.hpp"
+
+#include <list>
 
 class Gameplay: public BaseScene {
 public:
@@ -43,6 +49,12 @@ protected:
 	void MouseButtonUp(SDL_MouseButtonEvent const&);
 	void KeyDown(SDL_KeyboardEvent const&);
 	void KeyUp(SDL_KeyboardEvent const&);
+
+	//members
+	Image blockTemplate;
+	std::list<Block> blockList;
+
+	Player player;
 };
 
 #endif

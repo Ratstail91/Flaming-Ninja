@@ -20,10 +20,33 @@
  * distribution.
 */
 #ifndef ENTITY_HPP_
-#define ENTItY_HPP_
+#define ENTITY_HPP_
+
+#include "bounding_box.hpp"
+#include "image.hpp"
+#include "vector2.hpp"
 
 class Entity {
-	//
+public:
+	Entity();
+	~Entity();
+
+	void Update();
+
+	Image* GetImage();
+
+	Vector2 SetOrigin(Vector2 v);
+	Vector2 GetOrigin();
+	Vector2 SetMotion(Vector2 v);
+	Vector2 GetMotion();
+	BoundingBox SetBounds(BoundingBox b);
+	BoundingBox GetBounds();
+
+private:
+	Image image;
+	Vector2 origin;
+	Vector2 motion;
+	BoundingBox bounds;
 };
 
 #endif

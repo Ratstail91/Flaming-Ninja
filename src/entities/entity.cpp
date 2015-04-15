@@ -21,3 +21,44 @@
 */
 #include "entity.hpp"
 
+Entity::Entity() {
+	origin = {0, 0};
+	motion = {0, 0};
+	bounds = {0, 0, 0, 0};
+}
+
+Entity::~Entity() {
+	//
+}
+
+void Entity::Update() {
+	origin += motion;
+}
+
+Image* Entity::GetImage() {
+	return &image;
+}
+
+Vector2 Entity::SetOrigin(Vector2 v) {
+	return origin = v;
+}
+
+Vector2 Entity::GetOrigin() {
+	return origin;
+}
+
+Vector2 Entity::SetMotion(Vector2 v) {
+	return motion = v;
+}
+
+Vector2 Entity::GetMotion() {
+	return motion;
+}
+
+BoundingBox Entity::SetBounds(BoundingBox b) {
+	return bounds = b;
+}
+
+BoundingBox Entity::GetBounds() {
+	return bounds;
+}

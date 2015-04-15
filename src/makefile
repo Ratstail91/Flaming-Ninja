@@ -1,5 +1,5 @@
 #include directories
-INCLUDES+=. ../common/utilities
+INCLUDES+=. entities ../common/graphics ../common/utilities
 
 #libraries
 #the order of the $(LIBS) is important, at least for MinGW
