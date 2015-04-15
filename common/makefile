@@ -1,4 +1,5 @@
 all:
+	$(MAKE) -C debugging
 	$(MAKE) -C graphics
 	$(MAKE) -C utilities
 
