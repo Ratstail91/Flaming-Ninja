@@ -19,7 +19,35 @@
  * 3. This notice may not be removed or altered from any source
  * distribution.
 */
-#include "minkowski.hpp"
+#include "minkowski_maths.hpp"
+
+/* DOCS: Explanation of the minkowski collision algorithms used here
+ * 
+ * Diagram 1:
+ * 
+	      B
+	     /|
+	  c / | a
+	   /  |
+	  A---C
+	    b
+ * 
+ * This triangle is a right angle triangle, with A at the entity origin, B is
+ * the end point of the motion vector, and C is a right-angle. Each corner is
+ * denoted with a capital letter (A, B and C), while the opposite line is
+ * denoted by a lowercase letter (a, b and c respectively).
+ * 
+ * The mathematical operations here are preformed on structures that have been
+ * subjected to a minkowski sum i.e. the walls have had the entity's bounds
+ * added to them. The purpose of these algorithms are to determine how the
+ * entity is to move. The ideal behaviour is to allow the entity to move along
+ * the original motion vector as far as possible, before deflecting it's
+ * movement in a new direction, and repeating the process. If the motion vector
+ * would terminate early at a 90° angle, then the motion can stop there.
+ * 
+ * Some known bugs are a tendancy for the entity to "stick" to the walls, as
+ * well as motions of {0, 0} breaking the algorithm as a whole.
+*/
 
 double sin(Vector2 v) {
 	return v.y / sqrt(v.x*v.x + v.y*v.y);
@@ -43,14 +71,32 @@ std::list<BoundingBox> sweepBoxList(std::list<BoundingBox> boxList, BoundingBox 
 	return boxList;
 }
 
+/* DOCS: (Continued)
+ * The algorithm starts at calcCollision(), which takes the origin, motion and
+ * boxList as parameters. This applies the projection system to all given
+ * boxes, as many times as needed.
+*/
+
 void calcCollision(Vector2& origin, Vector2& motion, std::list<BoundingBox> boxList) {
+	//BUGFUX: ZERO motion
 	if (motion == 0) {
 		return;
 	}
 
-	//setup vectors to work on
+	//the temp vectors
 	Vector2 shortestMotion = motion;
 	Vector2 deflectedMotion = {0, 0};
 
-	//TODO
+	//check if the motion vector passes through a box area
+	//if so, recieve the "shortest" motion possible
+	//then, calculate the deflection
+	//account for a "shortest" projection of 0 (collided at 90°)
+
+	for (auto& box : boxList) {
+		//TODO
+	}
 }
+
+/* DOCS: (Continued)
+ * Next...
+*/

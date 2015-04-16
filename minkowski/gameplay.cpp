@@ -62,7 +62,7 @@ void Gameplay::Update() {
 	//NOTE: magic numbers for the player's bounding box
 	//NOTE: the player's bounding box has one less pixel on the sides, a side effect of the vector2_aux.cpp algorithm
 	std::list<BoundingBox> boxList = CalcBoxList();
-	SweepBoxList(boxList, {1, 1, 30, 30});
+	SweepBoxList(boxList, {1, 1, 30, 30}); //1 pixel margin
 	Vector2 epsilon(16, 16);
 	player.SetOrigin(ProjectCollisionVector(player.GetOrigin() + epsilon, player.GetMotion(), boxList) - epsilon);
 
