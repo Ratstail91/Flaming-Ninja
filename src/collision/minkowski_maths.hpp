@@ -19,53 +19,14 @@
  * 3. This notice may not be removed or altered from any source
  * distribution.
 */
-#include "platform.hpp"
+#ifndef MINKOWSKIMATHS_HPP_
+#define MINKOWSKIMATHS_HPP_
 
-Platform::Platform(int argX, int argY, int argW, int argH) {
-	x = argX;
-	y = argY;
-	w = argW;
-	h = argH;
-}
+#include "bounding_box.hpp"
 
-void Platform::DrawTo(SDL_Surface* const dest, int camX, int camY) {
-	//Use SDL to draw a box
-	SDL_Rect rect;
-	rect.x = x;
-	rect.y = y;
-	rect.w = w;
-	rect.h = h;
-	SDL_FillRect(dest, &rect, SDL_MapRGB(dest->format, 0, 61, 228));
-}
+#include <list>
 
-int Platform::SetX(int i) {
-	return x = i;
-}
+std::list<BoundingBox> sweepBoxList(std::list<BoundingBox> boxList, BoundingBox charBounds);
+void calcCollision(Vector2& origin, Vector2& motion, std::list<BoundingBox> boxList);
 
-int Platform::SetY(int i) {
-	return y = i;
-}
-
-int Platform::SetW(int i) {
-	return w = i;
-}
-
-int Platform::SetH(int i) {
-	return h = i;
-}
-
-int Platform::GetX() {
-	return x;
-}
-
-int Platform::GetY() {
-	return y;
-}
-
-int Platform::GetW() {
-	return w;
-}
-
-int Platform::GetH() {
-	return h;
-}
+#endif

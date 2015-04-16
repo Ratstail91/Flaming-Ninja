@@ -32,12 +32,15 @@ public:
 	~Entity();
 
 	void Update();
+	void DrawTo(SDL_Surface* const dest, Sint16 camX, Sint16 camY);
 
 	Image* GetImage();
 
 	Vector2 SetOrigin(Vector2 v);
+	Vector2 ShiftOrigin(Vector2 v);
 	Vector2 GetOrigin();
 	Vector2 SetMotion(Vector2 v);
+	Vector2 ShiftMotion(Vector2 v);
 	Vector2 GetMotion();
 	BoundingBox SetBounds(BoundingBox b);
 	BoundingBox GetBounds();

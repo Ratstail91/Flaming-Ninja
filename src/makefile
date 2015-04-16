@@ -1,5 +1,5 @@
 #include directories
-INCLUDES+=. entities ../common/graphics ../common/utilities
+INCLUDES+=. collision entities ../common/graphics ../common/utilities
 
 #libraries
 #the order of the $(LIBS) is important, at least for MinGW
@@ -25,6 +25,7 @@ OUT=$(addprefix $(OUTDIR)/,ninja)
 
 #targets
 all: $(OBJ) $(OUT)
+	$(MAKE) -C collision
 	$(MAKE) -C entities
 	$(CXX) $(CXXFLAGS) -o $(OUT) $(OBJ) $(LIBS)
 

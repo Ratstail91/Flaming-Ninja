@@ -21,6 +21,11 @@
 */
 #include "gameplay.hpp"
 
+#include <iostream>
+
+constexpr double gravityShift = 0.1;
+constexpr double gravityMax = 5.0;
+
 //-------------------------
 //Public access members
 //-------------------------
@@ -29,11 +34,12 @@ Gameplay::Gameplay() {
 	//singleton alias
 	ConfigUtility& config = ConfigUtility::GetSingleton();
 
-	//load the images
+	//setup the player
 	player.GetImage()->LoadSurface(config["dir.graphics"] + "player.bmp");
-	blockTemplate.LoadSurface(config["dir.graphics"] + "brick.bmp");
+	player.SetBounds({0, 0, player.GetImage()->GetClipW(), player.GetImage()->GetClipH()});
 
 	//generate the ground
+	blockTemplate.LoadSurface(config["dir.graphics"] + "brick.bmp");
 	for (int i = 0; i < 10; i++) {
 		blockList.emplace_front();
 		blockList.front().SetOrigin({i * 32.0, 568.0});
@@ -55,7 +61,34 @@ void Gameplay::FrameStart() {
 }
 
 void Gameplay::Update() {
-	//
+	//player gravity
+	if (player.GetMotion().y < gravityMax) {
+		player.ShiftMotion({0, gravityShift});
+	}
+	else {
+		//limit fall speed to terminal velocity
+		Vector2 g = player.GetMotion();
+		g.y = gravityMax;
+		player.SetMotion(g);
+	}
+
+	//update the moving entities
+	player.Update();
+
+	//check collisions
+	BoundingBox playerBox = player.GetBounds() + player.GetOrigin();
+	for (auto& it : blockList) {
+		BoundingBox blockBox = it.GetBounds() + it.GetOrigin();
+
+		//collision
+		if (playerBox.CheckOverlap(blockBox)) {
+			//move the player back
+			player.ShiftOrigin(player.GetMotion() * -1);
+
+			//stop the motion
+			player.SetMotion({0, 0});
+		}
+	}
 }
 
 void Gameplay::FrameEnd() {
@@ -64,8 +97,10 @@ void Gameplay::FrameEnd() {
 
 void Gameplay::Render(SDL_Surface* const screen) {
 	for (auto& it : blockList) {
-		it.GetImage()->DrawTo(screen, it.GetOrigin().x, it.GetOrigin().y);
+		it.DrawTo(screen, 0, 0);
 	}
+
+	player.DrawTo(screen, 0, 0);
 }
 
 //-------------------------

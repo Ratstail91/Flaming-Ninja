@@ -19,46 +19,38 @@
  * 3. This notice may not be removed or altered from any source
  * distribution.
 */
-#ifndef PLAYER_HPP_
-#define PLAYER_HPP_
+#include "minkowski.hpp"
 
-#include "SDL/SDL.h"
-#include "vector2.hpp"
+double sin(Vector2 v) {
+	return v.y / sqrt(v.x*v.x + v.y*v.y);
+}
 
-class Player {
-public:
-	Player() = default;
-	~Player() = default;
+double cos(Vector2 v) {
+	return v.x / sqrt(v.x*v.x + v.y*v.y);
+}
 
-	void DrawTo(SDL_Surface* const dest, int camX, int camY);
+double tan(Vector2 v) {
+	return v.y / v.x;
+}
 
-	//accessors & mutators
-	Vector2 SetOrigin(Vector2);
-	Vector2 ShiftOrigin(Vector2);
-	Vector2 GetOrigin();
+std::list<BoundingBox> sweepBoxList(std::list<BoundingBox> boxList, BoundingBox charBounds) {
+	for (auto& it : boxList) {
+		it.x -= charBounds.w / 2;
+		it.y -= charBounds.h / 2;
+		it.w += charBounds.w;
+		it.h += charBounds.h;
+	}
+	return boxList;
+}
 
-	Vector2 SetMotion(Vector2);
-	Vector2 ShiftMotion(Vector2);
-	Vector2 GetMotion();
+void calcCollision(Vector2& origin, Vector2& motion, std::list<BoundingBox> boxList) {
+	if (motion == 0) {
+		return;
+	}
 
-	//more granular accessors & mutators
-	double SetOriginX(double);
-	double SetOriginY(double);
-	double ShiftOriginX(double);
-	double ShiftOriginY(double);
-	double GetOriginX();
-	double GetOriginY();
+	//setup vectors to work on
+	Vector2 shortestMotion = motion;
+	Vector2 deflectedMotion = {0, 0};
 
-	double SetMotionX(double);
-	double SetMotionY(double);
-	double ShiftMotionX(double);
-	double ShiftMotionY(double);
-	double GetMotionX();
-	double GetMotionY();
-
-private:
-	Vector2 origin;
-	Vector2 motion;
-};
-
-#endif
+	//TODO
+}

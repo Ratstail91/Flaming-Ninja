@@ -35,6 +35,10 @@ void Entity::Update() {
 	origin += motion;
 }
 
+void Entity::DrawTo(SDL_Surface* const dest, Sint16 camX, Sint16 camY) {
+	image.DrawTo(dest, origin.x + camX, origin.y + camY);
+}
+
 Image* Entity::GetImage() {
 	return &image;
 }
@@ -43,12 +47,20 @@ Vector2 Entity::SetOrigin(Vector2 v) {
 	return origin = v;
 }
 
+Vector2 Entity::ShiftOrigin(Vector2 v) {
+	return origin += v;
+}
+
 Vector2 Entity::GetOrigin() {
 	return origin;
 }
 
 Vector2 Entity::SetMotion(Vector2 v) {
 	return motion = v;
+}
+
+Vector2 Entity::ShiftMotion(Vector2 v) {
+	return motion += v;
 }
 
 Vector2 Entity::GetMotion() {
